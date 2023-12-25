@@ -1,0 +1,22 @@
+1.a. infix operator
+b. function
+c. function
+d. list
+e. error
+f. boolean
+
+2.1.
+equal :: Eq a => [a] -> [a] -> Bool
+equal [] [] = True
+equal (h:t) (x:s) = if h /= x then False else equal (t) (s)
+
+2.2.
+rev :: [a] -> [a]
+rev [] = []
+rev (h:t) = rev t ++ [h]
+
+2.3.
+palindrome :: Eq a => [a] -> Bool
+palindrome (x:s) = equal (x:s) (rev(x:s))
+
+3.1.

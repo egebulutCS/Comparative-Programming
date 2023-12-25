@@ -1,0 +1,40 @@
+clause :: String -> [(String, [String])] -> (Bool, [String])
+
+clause s [] = (False, [])
+clause s (h:t) = if s == fst(h) then (True, snd(h)) else clause s t
+
+solution :: [String] -> [(String, [String])] -> Bool
+
+solution [] _ = True
+solution (x:xs) c@(h:t) = if fst(clause x c) then solution xs c else False
+
+
+getChar :: IO Char
+
+putChar :: Char -> IO ()
+
+return :: Char -> IO
+
+getTwo :: IO (Char, Char)
+
+getTwo = do x <- getChar
+            y <- getChar
+            return (x,y)
+
+getChars :: IO String
+
+getChars = do c <- getChar
+              if c == '\n'
+                  then return ""
+                  else do l <- getChars
+                          return (c:l)
+
+putString :: String -> IO ()
+
+putString [] = return ()
+putString (x:xs) = do putChar x
+                  putStr xs
+putStringLn :: String -> IO ()
+
+putStringLn xs = do putString xs
+                putChar '\n'

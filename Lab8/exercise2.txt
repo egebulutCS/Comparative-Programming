@@ -1,0 +1,58 @@
+type Name = [Char]
+data Lam = Var Name | App Lam Lam | Abs Name Lam deriving (Show)
+
+type Set = [Name]
+
+add :: Name -> Set -> Set
+
+add x [] = [x]
+add x (h:t) = if x == h then h:t else h:add x t
+
+join :: Set -> Set -> Set
+
+join [] s = s
+join (h:t) s = add h (join t s)
+
+remove :: Name -> Set -> Set
+
+remove x [] = []
+remove x (h:t) = if x == h then t else h:remove x t
+
+fv :: Lam -> Set
+fv (Var x) = [x]
+fv (App t u) = join (fv t) (fv u)
+fv (Abs x t) = remove x (fv t)
+
+
+closed :: Lam -> Bool
+closed t = (fv t) == []
+
+subst :: Name -> Lam -> Lam -> Lam
+
+subst v (Var v2) t = if v == v2 then t else Var v2
+subst v (Abs x 1) t = if v == x then (Abs x 1) else Abs x (subst v 1 t)
+subst v (App e1 e2) t = App (subst v e1 t) (subst v e2 t)
+
+eval :: Lam -> Lam
+
+eval (App t1 t2) =
+	case eval t1 of
+		(Abs a u) -> eval (subst a u t2)
+		t -> t
+	eval t = t
+
+i = Abs "x" (Var "x")
+two = Abs "f" (Abs "x" (App (Var "f") (App (Var "f") (Var "x"))))
+d = Abs "x" (App (Var "x") (Var "x"))
+
+eval (App i i)
+--Result: Abs "x" (Var"x")
+
+eval (App two i)
+--Result: Abs "x" (App (Abs "x" (Var "x")) (App (Abs "x" (Var "x")) (Var "x")))
+
+eval (App (App two i) i)
+--Result: Abs "x" (Var "x")
+
+eval (App (Abs "x" (Var "y")) (App d d))
+--Result: Var "y"

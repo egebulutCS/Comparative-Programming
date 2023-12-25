@@ -1,0 +1,1 @@
+f x y z q = x+y+y+z

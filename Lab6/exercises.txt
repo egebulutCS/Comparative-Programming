@@ -1,0 +1,29 @@
+sumAll :: Num a => [a] -> a
+sumAll [] = 0
+sumAll (t:h) = t + sumAll(h)
+
+multAll :: Num a => [a] -> a
+multAll [] = 1
+multAll (t:h) = t * multAll(h)
+
+fold :: Num a => (a -> a -> a) -> a -> [a] -> a
+fold _ n [] = n
+fold func n (t:h) = fold func (func t n) (h)
+
+len :: Num a => [a] -> a
+len [] = 0
+len t = fold (\x -> \y -> 1+y) 0 t
+
+maxElem :: Ord a => Num a => [a] -> a
+maxElem t = fold (\x -> \y -> if x>y then x else y) 0 t
+
+flatten :: Num a => [a] -> [a] -> [a]
+flatten t = fold (++) [] t
+
+data IntOrBool = I Int | B Bool deriving (Show)
+
+data Lam = Var [Char] | Abs [Char] Lam | App Lam Lam deriving (Show)
+
+fix f = f(fix f)
+
+fact = \f -> \z -> if x==0 then 1 else x*f(x-1)

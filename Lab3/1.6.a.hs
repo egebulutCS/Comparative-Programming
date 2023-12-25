@@ -1,0 +1,1 @@
+map (\x -> if x==True then 1 else 0) [True,False,True,True]

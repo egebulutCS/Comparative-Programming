@@ -1,0 +1,42 @@
+type Name = [Char]
+type Memory = [(Name, Integer)]
+
+update :: Name -> Integer -> Memory -> Memory
+update n i [] = [(n,i)]
+update n i (t:h) = if fst(t) == n then (n,i):h else t:(update n i h)
+
+find :: Name -> Memory -> Integer
+find n [] = 0
+find n (t:h) = if n == fst(t) then snd(t) else find n h
+
+data Aexp = Num Integer | Var Name | Plus Aexp Aexp | Mul Aexp Aexp deriving (Show)
+
+evalA :: Aexp -> Memory -> Integer
+evalA (Num n) m = n
+evalA (Var name) m = find name m
+evalA (Plus a1 a2) m = (+) (evalA a1 m) (evalA a2 m)
+evalA (Mul a1 a2) m = (*) (evalA a1 m) (evalA a2 m)
+
+data Bexp = And Bexp Bexp | Eq Aexp Aexp | Comp Aexp Aexp | Not Bexp deriving (Show)
+
+evalB :: Bexp -> Memory -> Bool
+evalB (And b1 b2) m = (evalB b1 m) && (evalB b2 m)
+evalB (Eq a1 a2) m = (evalA a1 m) == (evalA a2 m)
+evalB (Comp a1 a2) m = (evalA a1 m) < (evalA a2 m)
+evalB (Not b) m = not (evalB b m)
+
+data Com = Assign Name Aexp | Both Com Com | If Bexp Com Com | While Bexp Com deriving (Show)
+
+evalC :: Com -> Memory -> Memory
+evalC (Assign name a) m = update name (evalA a m) m
+evalC (Both c1 c2) m = evalC c2 (evalC c1 m)
+evalC (If b1 c1 c2) m = if (evalB b1 m) then (evalC c1 m) else (evalC c2 m)
+evalC (While b1 c1) m = if (evalB b1 m) then evalC (While b1 c1) (evalC c1 m) else m
+
+p1 = Seq (Assign "x" (Num 1)) (Seq (Assign "y" (Var "x")) (Assign "x" (Var "z")))
+
+p2 = Seq (Assign "z" (Num 5)) (Seq (Assign "x" (Num 4)) (If (Comp (Var "z") (Var "x")) (Assign "y" (Var "z")) (Assign "y" (Var "x"))))
+
+p3 = Seq (Assign "z (Num 5)) (Seq (Assign "x" (Num 3)) (While (Comp (Var "z") (Var "x")) (Seq (Assign "y" (Add (Var "y")(Num 1))) (Assign "x" (Add (Var "x")(Num 1)))))
+
+p4 = Seq (Assign "y" (Num 1)) Seq (Assign "z" (Num 5)) (Seq (Assign "x" (Num 1)) (While (Not (Comp (Var "z")(Var "x"))) (Seq (Assign "y" (Mul (Var "y")(Var "x"))) (Assign "x" (Add (var"x")(Num 1)))))))

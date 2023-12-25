@@ -1,0 +1,4 @@
+data BinaryTree a = EmptyTree | Node a (BinaryTree a) (BinaryTree a) deriving (Show)
+
+mapTree f EmptyTree = EmptyTree
+mapTree f (Node v l r) = Node (f v) (mapTree f l) (mapTree f r)

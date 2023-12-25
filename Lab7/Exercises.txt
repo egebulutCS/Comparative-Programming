@@ -1,0 +1,18 @@
+1 Types
+i :: p -> p
+k :: p1 -> p2 -> p1
+zero :: p1 -> p2 -> p2
+one :: (t1 -> t2) -> t1 -> t2
+two :: (t -> t) -> t -> t
+three :: (t -> t) -> t -> t
+s :: (t1 -> t2 -> t3) -> (t1 -> t2) -> t1 -> t3
+w :: (t1 -> t1 -> t2) -> t1 -> t2
+d :: infinite, not typeable
+newi :: t -> t
+fib :: (Eq t1, Num t1,  Num t2) => t1 -> t2 -> t2 -> t2
+fib2 :: (Eq a, Num a, Num c) => (a, c, c) -> c
+
+2 Comparison with Java
+data Shape = Square Float | Circle Float deriving (Show)
+area (Square x) = x*x
+area (Circle r) = pi*r*r
